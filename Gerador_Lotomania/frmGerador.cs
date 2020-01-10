@@ -13,7 +13,7 @@ namespace Gerador_Lotomania
     public partial class frmGerador : Form
     {
 
-        List<int> f_ltsNumeros = new List<int>();
+        List<int> f_lstNumeros = new List<int>();
 
         public frmGerador()
         {
@@ -22,43 +22,49 @@ namespace Gerador_Lotomania
 
         private void btnGerar_Click(object sender, EventArgs e)
         {
-            f_ltsNumeros.Clear();
-            f_ltsNumeros.AddRange(SorteiaNumerosSemRepetir(50, 0, 100));
-            Carrega_Label();
+            f_lstNumeros.Clear();
+            f_lstNumeros.AddRange(SorteiaNumerosSemRepetir(50, 0, 100));
+            Carrega_Numeros();
 
         }
 
-        private static int[] SorteiaNumerosSemRepetir(int quantidade, int minimo, int maximo)
+        private static int[] SorteiaNumerosSemRepetir(int w_intQuantidade, int w_intMinimo, int w_intMaximo)
         {
             // Validações dos argumentos.
-            if (quantidade < 0)
+            if (w_intQuantidade < 0)
                 throw new ArgumentException("Quantidade deve ser maior que zero.");
-            else if (quantidade > maximo + 1 - minimo)
+            else if (w_intQuantidade > w_intMaximo + 1 - w_intMinimo)
                 throw new ArgumentException("Quantidade deve ser menor do que a diferença entre máximo e mínimo.");
-            else if (maximo <= minimo)
+            else if (w_intMaximo <= w_intMinimo)
                 throw new ArgumentException("Máximo deve ser maior do que mínimo.");
 
-            List<int> numerosSorteados = new List<int>();
+            List<int> w_lstNumerosSorteados = new List<int>();
 
-            while (numerosSorteados.Count < quantidade)
+            while (w_lstNumerosSorteados.Count < w_intQuantidade)
             {
-                Random w_rnd1 = new Random();
-                int numeroSorteado = w_rnd1.Next(minimo, maximo);
+                Random w_rndGeraNumero = new Random();
+                int w_intNumeroSorteado = w_rndGeraNumero.Next(w_intMinimo, w_intMaximo);
 
                 // Número já foi sorteado? Então sorteamos novamente até o número não ter sido sorteado ainda.
-                while (numerosSorteados.Contains(numeroSorteado))
+                while (w_lstNumerosSorteados.Contains(w_intNumeroSorteado))
                 {
-                    numeroSorteado = w_rnd1.Next(minimo, maximo);
+                    int w_intVerificaNumero = w_intNumeroSorteado;
+                    w_intNumeroSorteado = w_rndGeraNumero.Next(w_intMinimo, w_intMaximo);
+
+                    if(w_intVerificaNumero == w_intNumeroSorteado + 1 || w_intVerificaNumero == w_intNumeroSorteado - 1) // Evitar que gere números sequenciais
+                    {
+                        w_intNumeroSorteado = w_rndGeraNumero.Next(w_intMinimo, w_intMaximo);
+                    }
                 }
                     
-                numerosSorteados.Add(numeroSorteado);
+                w_lstNumerosSorteados.Add(w_intNumeroSorteado);
             }
 
-            numerosSorteados.Sort(); // Ordena a lista
-            return numerosSorteados.ToArray();
+            w_lstNumerosSorteados.Sort(); // Ordena a lista
+            return w_lstNumerosSorteados.ToArray();
         }
 
-        private void Carrega_Label()
+        private void Carrega_Numeros()
         {
             try
             {
@@ -119,7 +125,7 @@ namespace Gerador_Lotomania
 
                 foreach (var lbl in lbls)
                 {
-                    lbl.Text = f_ltsNumeros[w_intCont -1].ToString();
+                    lbl.Text = f_lstNumeros[w_intCont -1].ToString();
                     w_intCont++;
                 }
 
